@@ -34,13 +34,10 @@ def save_image():
 
     with open("k8s_images/load_image.sh", "w") as f:
         print("\033[1;31m正在创建导入镜像的shell脚本\033[0m")
-        f.write("#!/bin/bash \n")
-        f.write("ls *.tar|sort -h > ls.txt \n")
-        f.write("for i in $(cat ls.txt) \n")
-        f.write("do \n")
-        f.write("    docker load < $i \n")
-        f.write("done \n")
-        f.write("rm -rf ls.txt \n")
+        k8s_write_images = ["#!/bin/bash \n", "ls *.tar|sort -h > ls.txt \n", "for i in $(cat ls.txt) \n", "do \n",
+                            "    docker load < $i \n", "done \n", "rm -rf ls.txt \n"]
+        for k8s_write_image in k8s_write_images:
+            f.write(k8s_write_image)
         f.write('echo -e "\\e[1;31m 镜像导入完成 \\e[0m" \n')
         f.close()
         print("\033[1;31m导入镜像shell脚本创建完成，请查看k8s_images下的load_image.sh文件")
@@ -61,8 +58,6 @@ if __name__ == '__main__':
     print("\033[1;31m=" * 100, "\033[0m")
     print()
     print("\033[1;33m")
-
-    # stty erase '^H' 使脚本执行过程中可以使用退格键退格
     subprocess.run("stty erase '^H'", stdout=subprocess.PIPE,
                    shell=True)
     inp = input("  请输入你的选择： ").strip()
