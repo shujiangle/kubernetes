@@ -3,7 +3,7 @@
 
 
 import subprocess
-import os
+import os, time
 
 
 # get_image 是查看kubeadm所需镜像版本的函数
@@ -48,14 +48,28 @@ def save_image():
         subprocess.run(f"docker save -o k8s_images/{images}-{tag}.tar {k8s_image_list}", stdout=subprocess.PIPE,
                        shell=True)
     print("\033[1;31m镜像已经保存完成，请进入k8s_images目录查看")
+    time.sleep(5)
     print("=" * 100, "\033[0m")
+    tag_image()
+
+
+def tag_image():
+    if os.path.isdir("k8s_images"):
+        print("\033[1;31m正在打包k8s_images文件夹")
+        subprocess.run("tar zcvf k8s_images.tar.gz k8s_images", stdout=subprocess.PIPE,
+                       shell=True)
+        print("\033[1;31mk8s_images.tar.gz创建完成")
+        print("=" * 100, "\033[0m")
+    else:
+        print("\033[1;31mk8s_images目录不存在，请你先保存镜像\033[0m")
 
 
 if __name__ == '__main__':
     print("\033[1;31m=" * 100, "\033[0m")
     print("\033[1;33m", " 1) 输入get_image，查看你的kubeadm 需要的镜像信息")
-    print("  2) 输入save_image，拉取你需要的镜像", "\033[0m")
-    print("\033[1;31m=" * 100, "\033[0m")
+    print("  2) 输入save_image，拉取你需要的镜像")
+    print("  3) 输入tag_image, 打包镜像\033[0m")
+    print("=" * 100)
     print()
     print("\033[1;33m")
     subprocess.run("stty erase '^H'", stdout=subprocess.PIPE,
@@ -66,5 +80,7 @@ if __name__ == '__main__':
         get_image()
     elif inp == "save_image":
         save_image()
+    elif inp == "tag_image":
+        tag_image()
     else:
         print("你输入有问题，请重新输入： ")
